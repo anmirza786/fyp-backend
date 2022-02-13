@@ -39,6 +39,7 @@ INSTALLED_APPS = [
     'knox',
     'account',
     'competitions',
+    'cart',
     'ckeditor',
     'ckeditor_uploader',
 ]

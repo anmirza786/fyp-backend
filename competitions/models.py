@@ -1,4 +1,5 @@
 from distutils.command.upload import upload
+from pyexpat import model
 from django.db import models
 from django.core.validators import MinValueValidator
 from ckeditor.fields import RichTextField
@@ -33,7 +34,7 @@ class Competition(models.Model):
     letter_choices = models.CharField(max_length=3,
                                       help_text="Please enter range as A - Z",
                                       verbose_name="Ticket Letter Choices")
-    number_from = models.CharField(max_length=3,
+    number_from = models.CharField(max_length=7,
                                    help_text="Please enter range as 00 - 99",
                                    verbose_name="Ticket Number Choices",
                                    null=False,
@@ -41,8 +42,10 @@ class Competition(models.Model):
     total_tickets = models.PositiveIntegerField(null=False, blank=False)
     total_winners = models.PositiveIntegerField(default=1)
     actual_closing_date = models.DateTimeField(null=True, blank=True)
+    ultimate_closing_date = models.DateTimeField(null=True, blank=True)
     description = RichTextField()
     group_title = models.SmallIntegerField(choices=GroupTitleEnum.choices)
+    coupon_code_asked = models.BooleanField(default=False)
     move_section = models.SmallIntegerField(choices=MoveSectionEnum.choices)
     discount_price = models.DecimalField(max_digits=20,
                                          decimal_places=2,
@@ -50,12 +53,19 @@ class Competition(models.Model):
                                          blank=True,
                                          verbose_name='Discount Price',
                                          validators=[MinValueValidator(1)])
+    discount_text = models.CharField(max_length=255, null=True, blank=True)
     discount_active = models.BooleanField(default=False,
                                           null=False,
                                           blank=False)
     product_price = models.PositiveIntegerField(null=True,
                                                 blank=True,
                                                 verbose_name='Product Price')
+    live_draw_link = models.URLField(max_length=10000,
+                                     null=True,
+                                     blank=True,
+                                     default="https://google.com/")
+    competition_date_reschedual = models.IntegerField(default=0, blank=True)
+    total_earned = models.PositiveBigIntegerField(default=0, blank=True)
 
     @property
     def competition_image(self):
