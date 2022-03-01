@@ -4,9 +4,8 @@ from django.db import models
 
 
 class OrderStatusEnum(models.IntegerChoices):
-    ACTIVE = 1, "Active"
+    ACTIVE = 1, 'Active'
     SOLD = 2, 'Sold'
-    RESERVED = 3, 'Reserved'
 
 
 # Create your models here.
@@ -18,9 +17,9 @@ class Order(models.Model):
                                 decimal_places=2,
                                 null=True,
                                 blank=True)
-    # status = models.CharField(max_length=30,
-    #                           choices=OrderStatusEnum.choices,
-    #                           default=OrderStatusEnum.ACTIVE)
+    status = models.CharField(max_length=30,
+                              choices=OrderStatusEnum.choices,
+                              default=OrderStatusEnum.ACTIVE)
     order_at = models.DateTimeField(auto_now_add=True)
     phone = models.CharField(max_length=21, default='')
     address = models.CharField(max_length=256, default='')

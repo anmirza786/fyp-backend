@@ -1,3 +1,8 @@
-from .models import *
-from django.contrib.auth import admin
-from .utils import char_count
+from django.urls import path
+from .views import CompetitionListApiView, SingleCompetitionRetrieveApiView
+
+
+urlpatterns = [
+    path('', CompetitionListApiView.as_view()),
+    path('<pk>', SingleCompetitionRetrieveApiView.as_view())
+]

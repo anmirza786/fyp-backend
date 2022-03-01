@@ -42,6 +42,7 @@ class CompetitionAdmin(admin.ModelAdmin):
 
 
 class CompetitionTicketAdmin(admin.ModelAdmin):
+    list_filter = ('competition', )
 
     def has_add_permission(self, request):
         return False
