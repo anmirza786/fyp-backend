@@ -9,7 +9,7 @@ from ckeditor.fields import RichTextField
 # Create your models here.
 class GiftShop(models.Model):
     title = models.CharField(max_length=255, null=False, blank=False)
-    describe = RichTextField()
+    description = RichTextField()
     discount_price = models.DecimalField(max_digits=20,
                                          decimal_places=2,
                                          null=True,
@@ -32,9 +32,24 @@ class GiftShop(models.Model):
     def __str__(self):
         return str(self.title)
 
-    # @property
-    # def get_absolute_url(self):
-    #     return f'/{self.slug}/'
 
-    # def get_image(self):
-    #     return
+class Ecard(models.Model):
+    title = models.CharField(max_length=255, null=False, blank=False)
+    description = RichTextField()
+    discount_price = models.DecimalField(max_digits=20,
+                                         decimal_places=2,
+                                         null=True,
+                                         blank=True,
+                                         verbose_name='Discount Price',
+                                         validators=[MinValueValidator(1)])
+    discount_text = models.CharField(max_length=255, null=True, blank=True)
+    discount_active = models.BooleanField(default=False,
+                                          null=False,
+                                          blank=False)
+    product_price = models.DecimalField(max_digits=20,
+                                        decimal_places=2,
+                                        null=False,
+                                        blank=False)
+    ecard = models.FileField(upload_to='giftshop/ecard/',
+                             blank=False,
+                             null=False)

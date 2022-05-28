@@ -1,12 +1,17 @@
 from decimal import ROUND_DOWN, Decimal, Rounded
+from tkinter.tix import Tree
 from django.contrib.auth import get_user_model
 from django.db import models
+
+from competitions.models import CompetitionTicket
+
+User = get_user_model()
 
 
 class OrderStatusEnum(models.IntegerChoices):
     ACTIVE = 1, 'Active'
-    SOLD = 2, 'Sold'
-
+    CART = 2 , 'Cart'
+    DELIVERED = 3 , 'Delivered'
 
 # Create your models here.
 class Order(models.Model):
@@ -17,9 +22,9 @@ class Order(models.Model):
                                 decimal_places=2,
                                 null=True,
                                 blank=True)
-    status = models.CharField(max_length=30,
+    status = models.SmallIntegerField(max_length=30,
                               choices=OrderStatusEnum.choices,
-                              default=OrderStatusEnum.ACTIVE)
+                              default=OrderStatusEnum.CART)
     order_at = models.DateTimeField(auto_now_add=True)
     phone = models.CharField(max_length=21, default='')
     address = models.CharField(max_length=256, default='')
@@ -44,11 +49,37 @@ class OrderItem(models.Model):
                               related_name='order_items')
     # ecard = models.ForeignKey('ecard.Ecard',on_delete=models.CASCADE,related_name='orderitems',null=True)
     is_ticket = models.BooleanField(default=True)
-    title = models.CharField(max_length=255, null=True)
     ticket = models.ForeignKey('competitions.CompetitionTicket',
-                               on_delete=models.CASCADE,
-                               null=True)
-    ticket_name = models.CharField(max_length=4, null=True, default='')
+                               on_delete=models.SET_NULL,
+                               null=True, blank=True)
+    gift = models.ForeignKey('giftshop.GiftShop',
+                               on_delete=models.SET_NULL,
+                               null=True, blank=True)
 
     def __str__(self):
-        return str(self.ticket_name)
+        return str(self.order)
+
+
+# class CartStatusEnum(models.IntegerChoices):
+#     ACTIVE = 1, 'Active'
+#     PASSIVE = 2, 'Passive'
+
+
+# class Cart(models.Model):
+#     user = models.ForeignKey(User,
+#                              on_delete=models.SET_NULL,
+#                              null=True,
+#                              blank=True)
+#     status = models.CharField(max_length=30,
+#                               choices=CartStatusEnum.choices,
+#                               default=CartStatusEnum.ACTIVE)
+#     item = models.ForeignKey(CompetitionTicket,
+#                              on_delete=models.SET_NULL,
+#                              null=True,
+#                              blank=True)
+#     quantity = models.IntegerField(null=False)
+#     created_at = models.DateTimeField(auto_now_add=True)
+#     updated_at = models.DateTimeField(auto_now=True)
+
+#     def __str__(self):
+#         return self.user

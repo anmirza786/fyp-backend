@@ -6,6 +6,6 @@ urlpatterns = [
     # path('api-auth/', include('rest_framework.urls')),
     # path('competitions/', include('competitions.api')),
     # path('gift-shop/', include('giftshop.api')),
-    path('', views.GiftShopApiView.as_view()),
-    path('<pk>', views.GiftApiView.as_view())
+    path('gift-shop/', views.GiftShopApiView.as_view()),
+    path('ecard/', views.EcardApiView.as_view()),
 ]

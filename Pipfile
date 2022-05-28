@@ -16,6 +16,7 @@ pillow = "*"
 djoser = "*"
 django-cors-headers = "*"
 djangorestframework-simplejwt = "*"
+pymysql = "*"
 
 [dev-packages]
 yapf = "*"

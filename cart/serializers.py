@@ -1,31 +1,38 @@
+from dataclasses import field, fields
+from pyexpat import model
 from rest_framework import serializers
-from .models import Order, OrderItem
-from competitions.models import CompetitionTicket
+from .models import *
 
 
-class OrderProductSerializer(serializers.ModelSerializer):
+# class CartSerializer(serializers.ModelSerializer):
+
+#     class Meta:
+#         model = Cart
+#         fields = '__all__'
+
+
+# class CartItemSerializer(serializers.ModelSerializer):
+
+#     class Meta:
+#         model = Cart
+#         fields = '__all__'
+
+
+class OrderSerializer(serializers.ModelSerializer):
 
     class Meta:
-        model = CompetitionTicket
+        model = Order
         fields = '__all__'
 
 
 class OrderItemSerializer(serializers.ModelSerializer):
-    # product = OrderProductSerializer(required=False)
     class Meta:
         model = OrderItem
-        fields = '__all__'
+        fields = ['id', 'is_ticket']
 
+    
 
-class OrderItemMiniSerializer(serializers.ModelSerializer):
-    product = OrderProductSerializer(required=False)
-
-    class Meta:
-        model = OrderItem
-        fields = '__all__'
-
-
-class OrderItemUpdateSerializer(serializers.ModelSerializer):
+class OrderItemFetchSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = OrderItem

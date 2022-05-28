@@ -15,6 +15,16 @@ class CompetitionListApiView(ListAPIView):
             move_section=MoveSectionEnum.ONLINEINCOMPETITION).order_by('-id')
 
 
+class PublishedCompetitionListApiView(ListAPIView):
+    permission_classes = (permissions.AllowAny, )
+    serializer_class = CompetitionSerializers
+
+    def get_queryset(self):
+        return Competition.objects.filter(
+            move_section=MoveSectionEnum.PUBLISHEINPREPARECOMPETITION
+        ).order_by('-id')
+
+
 class SingleCompetitionRetrieveApiView(RetrieveAPIView):
     permission_classes = (permissions.AllowAny, )
     serializer_class = CompetitionSerializers
