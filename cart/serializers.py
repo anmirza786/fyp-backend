@@ -4,18 +4,19 @@ from rest_framework import serializers
 from .models import *
 
 
-class CartSerializer(serializers.ModelSerializer):
-
-    class Meta:
-        model = Cart
-        fields = '__all__'
-
-
 class CartItemSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = CartItem
-        fields = ['id', 'cart', 'is_ticket', 'ticket', 'gift']
+        exclude = ['cart']
+
+
+class CartSerializer(serializers.ModelSerializer):
+    cart_items = CartItemSerializer(read_only=True, many=True)
+
+    class Meta:
+        model = Cart
+        fields = "__all__"
 
 
 class OrderSerializer(serializers.ModelSerializer):
@@ -29,7 +30,7 @@ class OrderItemSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = OrderItem
-        fields = ['id', 'is_ticket']
+        fields = '__all__'
 
 
 class OrderItemFetchSerializer(serializers.ModelSerializer):

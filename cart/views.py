@@ -4,6 +4,7 @@ from rest_framework.response import Response
 from rest_framework.generics import CreateAPIView, RetrieveAPIView
 from rest_framework.views import APIView
 from random import random
+from rest_framework import permissions
 from cart.models import Cart, CartStatusEnum, Order, OrderItem, OrderStatusEnum
 from cart.serializers import CartItemSerializer, CartSerializer, OrderItemFetchSerializer, OrderItemSerializer, OrderSerializer
 from competitions.models import CompetitionTicket, CompetitionTicketStatusEnum
@@ -59,30 +60,33 @@ from django.utils import timezone
 
 class ActiveCartApiView(RetrieveAPIView):
     serializer_class = CartSerializer
+    permission_classes = (permissions.AllowAny, )
 
     def get_object(self):
-        cart, _ = Cart.objects.get_or_create(user=self.request.user,
-                                             status=CartStatusEnum.ACTIVE)
+        cart, _ = Cart.objects.get_or_create(status=CartStatusEnum.ACTIVE)
         return cart
 
 
 class CartItemCreateApiView(CreateAPIView):
     serializer_class = CartItemSerializer
+    print("@@")
 
     def perform_create(self, serializer):
+        print("a")
         cart, _ = Cart.objects.get_or_create(user=self.request.user,
                                              status=CartStatusEnum.ACTIVE)
+        print(cart)
         serializer.validated_data['cart'] = cart
 
-        if serializer.validated_data['is_ticket']:
-            available_ecards = Ecard.objects.exclude(
-                cartitems_cartuser_id=self.request.user.id)
-            if not available_ecards:
-                ecards = Ecard.objects.all()
-                random_ecard = random.choice(ecards)
-            else:
-                random_ecard = random.choice(available_ecards)
-            serializer.validated_data['ecard'] = random_ecard
+        serializer.validated_data['is_ticket']
+        # available_ecards = Ecard.objects.exclude(
+        #     cartitems_cartuser_id=self.request.user.id)
+        # if not available_ecards:
+        #     ecards = Ecard.objects.all()
+        #     random_ecard = random.choice(ecards)
+        # else:
+        #     random_ecard = random.choice(available_ecards)
+        # serializer.validated_data['ecard'] = random_ecard
 
         return super(CartItemCreateApiView,
                      self).perform_create(serializer=serializer)

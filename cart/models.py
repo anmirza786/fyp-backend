@@ -90,7 +90,9 @@ class CartStatusEnum(models.IntegerChoices):
 #     def __str__(self):
 #         return self.user
 class CartItem(models.Model):
-    cart = models.ForeignKey('Cart', on_delete=models.CASCADE)
+    cart = models.ForeignKey('Cart',
+                             on_delete=models.CASCADE,
+                             related_name="cart_items")
     is_ticket = models.BooleanField(default=True)
     ticket = models.ForeignKey(CompetitionTicket,
                                on_delete=models.SET_NULL,
@@ -102,7 +104,13 @@ class CartItem(models.Model):
                              blank=True)
 
     def __str__(self):
-        return self.cart
+        if self.ticket:
+            return str(self.ticket)
+        else:
+            return str(self.gift)
+
+    # def __str__(self):
+    #     return self.cart
 
     @property
     def total_price(self):
@@ -122,7 +130,7 @@ class Cart(models.Model):
     status = models.SmallIntegerField(max_length=30,
                                       choices=OrderStatusEnum.choices,
                                       default=OrderStatusEnum.CART)
-    cart = models.ManyToManyField(CartItem, related_name='items')
+    # cart = models.ManyToManyField(CartItem, related_name='items')
     created_at = models.DateTimeField(auto_now_add=True)
 
     class Meta:
@@ -130,6 +138,7 @@ class Cart(models.Model):
 
     def __str__(self):
         return self.user.email
+
     @property
     def total_price(self):
         total_price = 0
