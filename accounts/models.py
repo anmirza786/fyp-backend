@@ -45,6 +45,11 @@ class UserAccount(AbstractBaseUser, PermissionsMixin):
                                         blank=True)
     affiliated_code = models.CharField(max_length=10, null=True, blank=True)
     amount = models.PositiveIntegerField(default=0, null=False, blank=False)
+    phone = models.CharField(max_length=21, default='')
+    address = models.CharField(max_length=256, default='')
+    town = models.CharField(max_length=56, default='')
+    postalcode = models.CharField(max_length=11, default='')
+    country = models.CharField(max_length=250, default='')
     objects = UserAccountManager()
     USERNAME_FIELD = 'email'
     REQUIRED_FIELDS = ['name']

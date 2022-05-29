@@ -4,18 +4,18 @@ from rest_framework import serializers
 from .models import *
 
 
-# class CartSerializer(serializers.ModelSerializer):
+class CartSerializer(serializers.ModelSerializer):
 
-#     class Meta:
-#         model = Cart
-#         fields = '__all__'
+    class Meta:
+        model = Cart
+        fields = '__all__'
 
 
-# class CartItemSerializer(serializers.ModelSerializer):
+class CartItemSerializer(serializers.ModelSerializer):
 
-#     class Meta:
-#         model = Cart
-#         fields = '__all__'
+    class Meta:
+        model = CartItem
+        fields = ['id', 'cart', 'is_ticket', 'ticket', 'gift']
 
 
 class OrderSerializer(serializers.ModelSerializer):
@@ -26,11 +26,11 @@ class OrderSerializer(serializers.ModelSerializer):
 
 
 class OrderItemSerializer(serializers.ModelSerializer):
+
     class Meta:
         model = OrderItem
         fields = ['id', 'is_ticket']
 
-    
 
 class OrderItemFetchSerializer(serializers.ModelSerializer):
 
