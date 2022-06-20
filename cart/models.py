@@ -1,4 +1,5 @@
 from decimal import ROUND_DOWN, Decimal, Rounded
+from distutils.command.upload import upload
 from tkinter.tix import Tree
 from django.contrib.auth import get_user_model
 from django.db import models
@@ -94,14 +95,27 @@ class CartItem(models.Model):
                              on_delete=models.CASCADE,
                              related_name="cart_items")
     is_ticket = models.BooleanField(default=True)
-    ticket = models.ForeignKey(CompetitionTicket,
+    ticket = models.ForeignKey('competitions.CompetitionTicket',
                                on_delete=models.SET_NULL,
                                null=True,
-                               blank=True)
+                               blank=True,
+                               related_name='cart_ticket_item')
+    competition = models.ForeignKey('competitions.Competition',
+                                    on_delete=models.SET_NULL,
+                                    null=True,
+                                    blank=True,
+                                    related_name='cart_competition')
     gift = models.ForeignKey(GiftShop,
                              on_delete=models.SET_NULL,
                              null=True,
                              blank=True)
+    # image = models.URLField( null=True, blank=True)
+    title = models.CharField(max_length=21, null=True, blank=True)
+    price = models.DecimalField(max_digits=20,
+                                decimal_places=2,
+                                null=True,
+                                blank=True,
+                                verbose_name='Price')
 
     def __str__(self):
         if self.ticket:

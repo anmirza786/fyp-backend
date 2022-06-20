@@ -6,5 +6,5 @@ urlpatterns = [
     path("active/", views.ActiveCartApiView.as_view()),
     path("discounts/", views.OrderApiView.as_view()),
     path("add/", views.CartItemCreateApiView.as_view()),
-    path("delete/<int:pk>", views.ReserveApiView.as_view()),
+    path("delete/<int:pk>", views.CartItemDeleteApiView.as_view()),
 ]

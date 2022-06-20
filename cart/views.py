@@ -1,11 +1,12 @@
 from datetime import datetime, timedelta
 from unicodedata import decimal
+from requests import delete, request
 from rest_framework.response import Response
 from rest_framework.generics import CreateAPIView, RetrieveAPIView
 from rest_framework.views import APIView
 from random import random
 from rest_framework import permissions
-from cart.models import Cart, CartStatusEnum, Order, OrderItem, OrderStatusEnum
+from cart.models import Cart, CartItem, CartStatusEnum, Order, OrderItem, OrderStatusEnum
 from cart.serializers import CartItemSerializer, CartSerializer, OrderItemFetchSerializer, OrderItemSerializer, OrderSerializer
 from competitions.models import CompetitionTicket, CompetitionTicketStatusEnum
 from giftshop.models import Ecard
@@ -64,32 +65,59 @@ class ActiveCartApiView(RetrieveAPIView):
 
     def get_object(self):
         cart, _ = Cart.objects.get_or_create(status=CartStatusEnum.ACTIVE)
+        #  user=self.request.user)
+
         return cart
 
 
 class CartItemCreateApiView(CreateAPIView):
     serializer_class = CartItemSerializer
+    permission_classes = (permissions.AllowAny, )
     print("@@")
 
     def perform_create(self, serializer):
         print("a")
         cart, _ = Cart.objects.get_or_create(user=self.request.user,
                                              status=CartStatusEnum.ACTIVE)
-        print(cart)
+        # print(cart)
         serializer.validated_data['cart'] = cart
-
         serializer.validated_data['is_ticket']
-        # available_ecards = Ecard.objects.exclude(
-        #     cartitems_cartuser_id=self.request.user.id)
-        # if not available_ecards:
-        #     ecards = Ecard.objects.all()
-        #     random_ecard = random.choice(ecards)
-        # else:
-        #     random_ecard = random.choice(available_ecards)
-        # serializer.validated_data['ecard'] = random_ecard
+        ticket = serializer.validated_data['ticket']
 
+        ticket = CompetitionTicket.objects.get(id=ticket.id)
+
+        if ticket.status == CompetitionTicketStatusEnum.AVAILABLE:
+            # ticket.customer_id = self.request.user.id
+            # ticket.sold_time = datetime.now()
+            ticket.status = CompetitionTicketStatusEnum.RESERVED
+            ticket.save()
+            print('a')
+        else:
+            print('aa')
+            return Response("Already Added")
         return super(CartItemCreateApiView,
                      self).perform_create(serializer=serializer)
+
+
+class CartItemDeleteApiView(APIView):
+
+    def delete(self, request, pk, format=None):
+        cartitem = CartItem.objects.get(pk=pk)
+
+        # print(cartitem.ticket.id)
+        ticket = CompetitionTicket.objects.get(id=cartitem.ticket.id)
+
+        if ticket.status == CompetitionTicketStatusEnum.RESERVED:
+            # ticket.customer_id = self.request.user.id
+            # ticket.sold_time = datetime.now()
+            ticket.status = CompetitionTicketStatusEnum.AVAILABLE
+            ticket.save()
+
+        else:
+
+            return Response("Already Deleted")
+        cartitem.delete()
+        return Response('Deleted Successfully')
 
 
 class OrderApiView(RetrieveAPIView):
@@ -108,7 +136,7 @@ class OrderApiView(RetrieveAPIView):
                 })
             cart = Cart.objects.filter(user=user.id,
                                        status=CartStatusEnum.ACTIVE).first()
-            total = sum([i.quantity * i.price for i in cartItems])
+            # total = sum([i.quantity * i.price for i in cartItems])
             # discount = get_first_refer_discount(request.user)
             # total = round(total - (total * decimal.Decimal(discount / 100)), 2)
             data = self.request.data
@@ -150,12 +178,13 @@ class OrderApiView(RetrieveAPIView):
                                              is_ticket=True)
                 else:
                     include_gift = True
-                    OrderItem.objects.create(order=order,
-                                             title=item.title,
-                                             gift=item.gift,
-                                             quantity=item.quantity,
-                                             price=item.price,
-                                             is_ticket=False)
+                    OrderItem.objects.create(
+                        order=order,
+                        title=item.title,
+                        gift=item.gift,
+                        #  quantity=item.quantity,
+                        price=item.price,
+                        is_ticket=False)
             order.include_gift = include_gift
             order.save()
             cart.status = CartStatusEnum.CLOSED
