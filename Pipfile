@@ -17,9 +17,10 @@ djoser = "*"
 django-cors-headers = "*"
 djangorestframework-simplejwt = "*"
 pymysql = "*"
+sqlparse = "*"
 
 [dev-packages]
 yapf = "*"
 
 [requires]
-python_version = "3.9"
+python_version = "*"

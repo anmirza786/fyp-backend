@@ -128,7 +128,7 @@ class OrderApiView(RetrieveAPIView):
             user = self.request.user
             cartItems = Cart.objects.filter(
                 user=user.id,
-                status=CartStatusEnum.ACTIVE).first().items.all()
+                status=CartStatusEnum.ACTIVE).first().cart_items.all()
             if not cartItems:
                 return Response({
                     'error':
@@ -136,19 +136,20 @@ class OrderApiView(RetrieveAPIView):
                 })
             cart = Cart.objects.filter(user=user.id,
                                        status=CartStatusEnum.ACTIVE).first()
-            # total = sum([i.quantity * i.price for i in cartItems])
+            total = sum([i.price for i in cartItems])
             # discount = get_first_refer_discount(request.user)
-            # total = round(total - (total * decimal.Decimal(discount / 100)), 2)
+            total = round(total, 2)
             data = self.request.data
             order = Order.objects.create(user=self.request.user,
                                          status=OrderStatusEnum.ACTIVE,
                                          total=total,
-                                         discount=discount,
-                                         phone=data['phone'],
-                                         address=data['address'],
-                                         town=data['town'],
-                                         postcode=data['postcode'],
-                                         country=data['country'])
+                                        #  discount=discount,
+                                        #  phone=data['phone'],
+                                        #  address=data['address'],
+                                        #  town=data['town'],
+                                        #  postcode=data['postcode'],
+                                        #  country=data['country']
+                                        )
             # UserTransactions.objects.create(
             #     user=user,
             #     amount_paid=data['amount_paid'],
@@ -170,17 +171,17 @@ class OrderApiView(RetrieveAPIView):
                     ticket.sold_time = datetime.now()
                     ticket.save()
                     OrderItem.objects.create(order=order,
-                                             title=item.title,
+                                            #  title=item.title,
                                              ticket=item.ticket,
-                                             ticket_name=item.ticket_name,
-                                             ecard=item.ecard,
+                                            #  ticket_name=item.ticket_name,
+                                            #  ecard=item.ecard,
                                              price=item.price,
                                              is_ticket=True)
                 else:
                     include_gift = True
                     OrderItem.objects.create(
                         order=order,
-                        title=item.title,
+                        # title=item.title,
                         gift=item.gift,
                         #  quantity=item.quantity,
                         price=item.price,

@@ -57,6 +57,10 @@ class OrderItem(models.Model):
                                on_delete=models.SET_NULL,
                                null=True,
                                blank=True)
+    price = models.DecimalField(max_digits=8,
+                                decimal_places=2,
+                                null=True,
+                                blank=True)
     gift = models.ForeignKey('giftshop.GiftShop',
                              on_delete=models.SET_NULL,
                              null=True,
